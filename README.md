@@ -15,15 +15,15 @@ Grab the SQL code for your database engine and run it.
 Use the R script
 
 
-Sample output:
+#Sample output:
 
-MEASURE     RESULT     EXPLANATION
-G1     141,805,491        count of patients
-G2     20,328,289,601     count of events
-D2     90,024,522         count of patients with at least 1 Dx and 1 Rx
-D3     112,148,500        count of patients with at least 1 Dx and 1 Proc
-D4     5,939,621          count of patients with at least 1 Obs, 1 Dx and 1 Rx
-D5     277,975            count of deceased patients
+    MEASURE     RESULT     EXPLANATION
+    G1     141,805,491        count of patients
+    G2     20,328,289,601     count of events
+    D2     90,024,522         count of patients with at least 1 Dx and 1 Rx
+    D3     112,148,500        count of patients with at least 1 Dx and 1 Proc
+    D4     5,939,621          count of patients with at least 1 Obs, 1 Dx and 1 Rx
+    D5     277,975            count of deceased patients
 
 
 Relevant  IRIS forum discussion is here http://forums.ohdsi.org/t/short-and-quick-way-to-describe-your-cdm-dataset/251
