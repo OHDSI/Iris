@@ -1,6 +1,8 @@
+anon <- function() {
+
 ###########################################################
-# R script for IRIS   
-# 
+# R script for IRIS
+#
 #                                                         #
 ###########################################################
 
@@ -34,12 +36,12 @@ dbms          = "postgresql"      # Should be "sql server", "oracle", "postgresq
 
 
 
-# If you want to use R to run the SQL and extract the results tables, please create a connectionDetails 
+# If you want to use R to run the SQL and extract the results tables, please create a connectionDetails
 # object. See ?createConnectionDetails for details on how to configure for your DBMS.
 
 connectionDetails <- createConnectionDetails(dbms     = dbms,
-                                             user     = "postgres", 
-                                             password = "F1r3starter", 
+                                             user     = "postgres",
+                                             password = "F1r3starter",
                                              server   = "localhost/ohdsi")
 #example for redshift
 # connectionDetails <- createConnectionDetails(dbms=dbms
@@ -60,7 +62,7 @@ setwd(folder)
 #source("HelperFunctions.R")
 
 # Create the parameterized SQL files:
-inputFile <- "..\inst\sql\sql_server\iris_parameterized.sql"
+inputFile <- "../inst/sql/sql_server/iris_parameterized.sql"
 studyName <-'iris'  #does not need changing
 outputFile <- paste(studyName,"-autoTranslate-",dbms,".sql",sep="")
 
@@ -79,13 +81,13 @@ writeLines(paste("Created file '",outputFile,"'",sep=""))
                 translatedSqlOther <- translateSql(renderedSql, sourceDialect = "sql server", targetDialect = otherDialect)$sql
                 writeSql(translatedSqlOther,outputFileOther)
 
-                
+
                 otherDialect<-'postgresql'
                 outputFileOther <- paste(studyName,"-autoTranslate-",otherDialect,".sql",sep="")
                 translatedSqlOther <- translateSql(renderedSql, sourceDialect = "sql server", targetDialect = otherDialect)$sql
                 writeSql(translatedSqlOther,outputFileOther)
 
-                
+
                 otherDialect<-'ms sql'
                 outputFileOther <- paste(studyName,"-autoTranslate-",otherDialect,".sql",sep="")
                 #translatedSqlOther <- translateSql(renderedSql, sourceDialect = "sql server", targetDialect = otherDialect)$sql
@@ -106,6 +108,6 @@ executeSql(conn,readSql(outputFile))
 dbDisconnect(conn)
 
 #--end of code
-
+}
 
 
