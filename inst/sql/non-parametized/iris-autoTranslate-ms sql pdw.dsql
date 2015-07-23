@@ -43,20 +43,20 @@ USE irisResultsSchema;
 
 --For Oracle: drop temp tables if they already exist
 
-IF OBJECT_ID('iris_A', 'U') IS NOT NULL
-  DROP TABLE iris_A;
+IF XACT_STATE() = 1 COMMIT; IF OBJECT_ID('iris_A', 'U') IS NOT NULL  DROP TABLE  iris_A;
 
 
 
 --start of analysis
 
 
-create table iris_A
-(
+IF XACT_STATE() = 1 COMMIT; CREATE TABLE   iris_A
+ (
 	measure varchar(20) not null,
         result bigint,
         explanation varchar(255)
-);
+)
+WITH (DISTRIBUTION = REPLICATE);
 
 
 INSERT INTO iris_A (measure, result, explanation)
