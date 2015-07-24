@@ -27,9 +27,8 @@
 #' @param server			The name of the server
 #' @param port				(optional) The port on the server to connect to
 #' @param cdmSchema  Schema name where your patient-level data in OMOP CDM format resides
-#' @param resultsSchema  (Optional) Schema where you'd like the results tables to be created (requires user to have create/write access)
+#' @param cdmVersion     Define the OMOP CDM version used:  currently support 4 and 5.  Default = 4
 #' @param file	(Optional) Name of local file to place results; makre sure to use forward slashes (/)
-#' @param ...   (FILL IN) Additional properties for this specific study.
 #'
 #' @examples \dontrun{
 #' # Run study
@@ -38,7 +37,7 @@
 #'         password = "supersecret",
 #'         server = "myserver",
 #'         cdmSchema = "cdm_schema",
-#'         resultsSchema = "results_schema")
+#'         cdmVersion = 4)
 #'
 #' # Email result file
 #' email(from = "collaborator@@ohdsi.org",
@@ -49,7 +48,8 @@
 #' @export
 execute <- function(dbms, user = NULL, domain = NULL, password = NULL, server,
                     port = NULL,
-                    cdmSchema, resultsSchema, studyName, sourceName, useInterimTables, cdmVersion = 4,
+                    cdmSchema,
+                    cdmVersion = 4,
                     file) {
     # Open DB connection
     connectionDetails <- DatabaseConnector::createConnectionDetails(dbms = dbms,
@@ -67,34 +67,28 @@ execute <- function(dbms, user = NULL, domain = NULL, password = NULL, server,
     # Record start time
     start <- Sys.time()
 
-    # Place execution code here
-
-    parameterizedSql <- SqlRender::readSql(system.file(paste("sql/","sql_server",sep = ""),
-                                                       "iris_parameterized.sql",
-                                                       package = "Iris"))
-
-    renderedSql <- SqlRender::renderSql(parameterizedSql,
-                                        cdmSchema = cdmSchema,
-                                        resultsSchema = resultsSchema,
-                                        studyName = studyName,
-                                        sourceName = sourceName,
-                                        useInterimTables = useInterimTables )$sql
-
-    translatedSql <- SqlRender::translateSql(renderedSql,
-                                             sourceDialect = "sql server",
-                                             targetDialect = dbms)$sql
+    # Load, render and translate SQL
+    sql <- SqlRender::loadRenderTranslateSql(sqlFilename =  "iris_parameterized.sql",
+                                             dbms = dbms,
+                                             packageName = "Iris",
+                                             cdmSchema = cdmSchema,
+                                             cdmVersion = cdmVersion)
 
     writeLines("Executing Iris ...")
-    result <- DatabaseConnector::querySql(conn, translatedSql)
+    result <- DatabaseConnector::querySql(conn, sql)
 
     # Execution duration
     executionTime <- Sys.time() - start
+    writeLines(paste("Execution time:", format(executionTime)))
 
     # List of R objects to save
     objectsToSave <- c(
     	"result",
         "executionTime"
     	)
+
+    # Results are small, so print to screen; should provide users with a sense of accomplishment
+    print(result)
 
     # Save results to disk
     if (missing(file)) file <- getDefaultStudyFileName()

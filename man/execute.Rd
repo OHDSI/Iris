@@ -2,11 +2,10 @@
 % Please edit documentation in R/StudySpecific.R
 \name{execute}
 \alias{execute}
-\title{Execute OHDSI Study (FILL IN NAME)}
+\title{Execute OHDSI Iris}
 \usage{
 execute(dbms, user = NULL, domain = NULL, password = NULL, server,
-  port = NULL, cdmSchema, resultsSchema, file = getDefaultStudyFileName(),
-  ...)
+  port = NULL, cdmSchema, cdmVersion = 4, file)
 }
 \arguments{
 \item{dbms}{The type of DBMS running on the server. Valid values are
@@ -34,11 +33,9 @@ to be installed.}
 
 \item{cdmSchema}{Schema name where your patient-level data in OMOP CDM format resides}
 
-\item{resultsSchema}{(Optional) Schema where you'd like the results tables to be created (requires user to have create/write access)}
+\item{cdmVersion}{Define the OMOP CDM version used:  currently support 4 and 5.  Default = 4}
 
 \item{file}{(Optional) Name of local file to place results; makre sure to use forward slashes (/)}
-
-\item{...}{(FILL IN) Additional properties for this specific study.}
 }
 \value{
 Study results are placed in CSV format files in specified local folder and returned
@@ -46,12 +43,11 @@ as an R object class \code{OhdsiStudy} when sufficiently small.  The properties 
 \code{OhdsiStudy} may differ from study to study.
 }
 \description{
-Execute OHDSI Study (FILL IN NAME)
+Execute OHDSI Iris
 }
 \details{
-This function executes OHDSI Study (FILL IN NAME).
-This is a study of (GIVE SOME DETAILS).
-Detailed information and protocol are available on the OHDSI Wiki.
+This function executes OHDSI Iris and emails the results directly to Vojtech Huser.
+Iris ...  (GIVE SOME DETAILS).
 }
 \examples{
 \dontrun{
@@ -61,7 +57,7 @@ execute(dbms = "postgresql",
         password = "supersecret",
         server = "myserver",
         cdmSchema = "cdm_schema",
-        resultsSchema = "results_schema")
+        cdmVersion = 4)
 
 # Email result file
 email(from = "collaborator@ohdsi.org",

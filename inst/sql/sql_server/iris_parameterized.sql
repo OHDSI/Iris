@@ -1,5 +1,5 @@
 /*********************************************************************************
-# Copyright 2014 Observational Health Data Sciences and Informatics
+# Copyright 2015 Observational Health Data Sciences and Informatics
 #
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,132 +15,116 @@
 # limitations under the License.
 ********************************************************************************/
 
-
 /************************
 
 script to evaluate CDM repository
 
-last revised: Dec 17 2014
+last revised: July 21 2015
 
 author:  Vojtech Huser
+modifications by: Marc Suchard
 
 description:
 
-
-
 *************************/
-
-{DEFAULT @useInterimTables = 1}  /*useInterimTables:  @useInterimTables*/
-{DEFAULT @resultsSchema = 'irisResultsSchema'}  /*resultsSchema:  @resultsSchema*/
-{DEFAULT @studyName = 'iris'} /*studyName:  @studyName*/
-{DEFAULT @sourceName = 'source'} /*sourceName:  @sourceName*/
-{DEFAULT @cdmsourceName = 'source'} /*sourceName:  @sourceName*/
-
-
-
---switch to the schema where tables can be created
-{@useInterimTables ==1} ? {USE @resultsSchema;} : {--select 'not using interim tables'}
-
---For Oracle: drop temp tables if they already exist
-{@useInterimTables ==1} ? {
-IF OBJECT_ID('@studyName_A', 'U') IS NOT NULL
-  DROP TABLE @studyName_A;
-}
-
 
 --start of analysis
 
-{@useInterimTables ==1} ? {
-create table @studyName_A
-(
-	measure varchar(20) not null,
-        result bigint,
-        explanation varchar(255)
-);
-}
+-- Use CTEs as suggest by SqlRender vignette so no temporary tables nor Oracle write-permissions are necessary
 
-{@useInterimTables ==1} ? {INSERT INTO @studyName_A (measure, result, explanation)}
-select  '02G2',a.cnt, 'count of patients'
-FROM
-(
-	select count(*) cnt from @cdmSchema.person
-) a
+WITH
+iris_person AS ( --- CTE
+    select
+        CAST('02G2' AS VARCHAR) AS measure,
+        CAST(a.cnt AS BIGINT) AS result,
+        CAST('count of patients' AS VARCHAR) AS explanation
+    FROM (
+	    select COUNT_BIG(*) cnt from @cdmSchema.person
+    ) a
+),
+
+iris_event AS ( --- CTE
+    select
+        CAST('01G1' AS VARCHAR) AS measure,
+        CAST(a.cnt AS BIGINT) AS result,
+        CAST('count of events' AS VARCHAR) AS explanation
+    FROM (
+        select
+            (select COUNT_BIG(*)   from @cdmSchema.person)
+            +(select COUNT_BIG(*)  from @cdmSchema.observation)
+            +(select COUNT_BIG(*)  from @cdmSchema.condition_occurrence)
+            +(select COUNT_BIG(*)  from @cdmSchema.drug_exposure)
+            +(select COUNT_BIG(*)  from @cdmSchema.visit_occurrence)
+            +(select COUNT_BIG(*)  from @cdmSchema.death)
+            +(select COUNT_BIG(*)  from @cdmSchema.procedure_occurrence) cnt
+    ) a
+),
+
+iris_dx_rx AS ( --- CTE
+    select
+        CAST('D2' AS VARCHAR) AS measure,
+        CAST(a.cnt AS BIGINT) AS result,
+        CAST('count of patients with at least 1 Dx and 1 Rx' AS VARCHAR) AS explanation
+    FROM (
+        select COUNT_BIG(*) cnt from (
+            select distinct person_id from @cdmSchema.condition_occurrence
+            intersect
+            select distinct person_id from @cdmSchema.drug_exposure
+        ) b
+    ) a
+),
+
+iris_dx_proc AS ( --- CTE
+    select
+        CAST('D3' AS VARCHAR) AS measure,
+        CAST(a.cnt AS BIGINT) AS result,
+        CAST('count of patients with at least 1 Dx and 1 Proc' AS VARCHAR) AS explanation
+    FROM (
+        select COUNT_BIG(*) cnt from (
+            select distinct person_id from @cdmSchema.condition_occurrence
+            intersect
+            select distinct person_id from @cdmSchema.procedure_occurrence
+        ) b
+    ) a
+),
+
+iris_obs_dx_rx AS ( --- CTE
+    select
+        CAST('D4' AS VARCHAR) AS measure,
+        CAST(a.cnt AS BIGINT) AS result,
+        CAST('count of patients with at least 1 Obs, 1 Dx and 1 Rx' AS VARCHAR) AS explanation
+    FROM (
+        select COUNT_BIG(*) cnt from (
+            select distinct person_id from @cdmSchema.observation
+            intersect
+            select distinct person_id from @cdmSchema.condition_occurrence
+            intersect
+            select distinct person_id from @cdmSchema.drug_exposure
+        ) b
+    ) a
+),
+
+iris_dead AS ( --- CTE
+    select
+        CAST('D5' AS VARCHAR) AS measure,
+        CAST(a.cnt AS BIGINT) AS result,
+        CAST('count of deceased patients' AS VARCHAR) AS explanation
+    FROM (
+        select COUNT_BIG(*) cnt from @cdmSchema.death
+    ) a
+)
+
+-- a single select returns concatenated CTEs
+
+SELECT * FROM iris_person
+UNION ALL
+SELECT * FROM iris_event
+UNION ALL
+SELECT * FROM iris_dx_rx
+UNION ALL
+SELECT * FROM iris_dx_proc
+UNION ALL
+SELECT * FROM iris_obs_dx_rx
+UNION ALL
+SELECT * FROM iris_dead
 ;
-
-
-
-
-
-{@useInterimTables ==1} ? {INSERT INTO @studyName_A (measure, result, explanation)}
-select  '01G1',a.cnt, 'count of events'
-FROM
-(
-select 
-(select count(*)   from @cdmSchema.person)
-+(select count(*)  from @cdmSchema.observation)
-+(select count(*)  from @cdmSchema.condition_occurrence)
-+(select count(*)  from @cdmSchema.drug_exposure)
-+(select count(*)  from @cdmSchema.visit_occurrence)
-+(select count(*)  from @cdmSchema.death)
-+(select count(*)  from @cdmSchema.procedure_occurrence) cnt
-) a
-;
-
-
-{@useInterimTables ==1} ? {INSERT INTO @studyName_A (measure, result, explanation)}
-select  'D2',a.cnt, 'count of patients with at least 1 Dx and 1 Rx'
-FROM
-(
-  select count(*) cnt from
-  (
-  select distinct person_id from @cdmSchema.condition_occurrence
-  intersect
-  select distinct person_id from @cdmSchema.drug_exposure
-  ) b
-) a
-;
-
-
-{@useInterimTables ==1} ? {INSERT INTO @studyName_A (measure, result, explanation)}
-select  'D3',a.cnt, 'count of patients with at least 1 Dx and 1 Proc'
-FROM
-(
-  select count(*) cnt from
-  (
-  select distinct person_id from @cdmSchema.condition_occurrence
-  intersect
-  select distinct person_id from @cdmSchema.procedure_occurrence
-  ) b
-) a
-;
-
-
-{@useInterimTables ==1} ? {INSERT INTO @studyName_A (measure, result, explanation)}
-select  'D4',a.cnt, 'count of patients with at least 1 Obs, 1 Dx and 1 Rx'
-FROM
-(
-  select count(*) cnt from
-  (
-  select distinct person_id from @cdmSchema.observation
-  intersect
-  select distinct person_id from @cdmSchema.condition_occurrence
-  intersect
-  select distinct person_id from @cdmSchema.drug_exposure
-  ) b
-) a
-;
-
-
-{@useInterimTables ==1} ? {INSERT INTO @studyName_A (measure, result, explanation)}
-select  'D5',a.cnt, 'count of deceased patients'
-FROM
-(
-  select count(*) cnt from @cdmSchema.death  
-) a
-;
-
-
-
---use this last command  to extract the data (uncomment it first)
---{@useInterimTables ==1} ? {select * from @studyName_A;}
-

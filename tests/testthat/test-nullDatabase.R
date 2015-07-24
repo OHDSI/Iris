@@ -1,15 +1,5 @@
 library(testthat)
 
-test_that("Fail to connect", {
-
-    expect_error(execute(dbms = "",
-                         user = "",
-                         password = "",
-                         server = "",
-                         cdmSchema = "",
-                         resultsScheme = ""), regexp = "Failed to connect")
-})
-
 test_that("Execute against empty OMOP CDM databases", {
 
     executeResultSize <- 2 # Set to count of objects generated in execute()
@@ -19,8 +9,7 @@ test_that("Execute against empty OMOP CDM databases", {
                        user = "patrick",
                        password = "gh_56Fd8L",
                        port = 5432,
-                       cdmSchema = "CDMV5",
-                       resultsScheme = "patrick")
+                       cdmSchema = "CDMV5")
 
     expect_equal(length(result1),executeResultSize)
 
@@ -29,8 +18,7 @@ test_that("Execute against empty OMOP CDM databases", {
                        user = "patrick",
                        password = "gh_56Fd8L",
                        port = 1433,
-                       cdmSchema = "CDMV5",
-                       resultsScheme = "patrick")
+                       cdmSchema = "CDMV5")
 
     expect_equal(length(result2),executeResultSize)
 
@@ -39,8 +27,7 @@ test_that("Execute against empty OMOP CDM databases", {
                        user = "patrick",
                        password = "gh_56Fd8L",
                        #port = 1521,
-                       cdmSchema = "CDMV5",
-                       resultsScheme = "patrick")
+                       cdmSchema = "CDMV5")
 
     expect_equal(length(result3),executeResultSize)
 })
