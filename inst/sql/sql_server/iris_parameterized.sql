@@ -63,7 +63,7 @@ create table @studyName_A
 select  '02G2',a.cnt, 'count of patients'
 FROM
 (
-	select count(*) cnt from @cdmSchema.person
+	select COUNT_BIG(*) cnt from @cdmSchema.person
 ) a
 ;
 
@@ -76,13 +76,13 @@ select  '01G1',a.cnt, 'count of events'
 FROM
 (
 select 
-(select count(*)   from @cdmSchema.person)
-+(select count(*)  from @cdmSchema.observation)
-+(select count(*)  from @cdmSchema.condition_occurrence)
-+(select count(*)  from @cdmSchema.drug_exposure)
-+(select count(*)  from @cdmSchema.visit_occurrence)
-+(select count(*)  from @cdmSchema.death)
-+(select count(*)  from @cdmSchema.procedure_occurrence) cnt
+(select COUNT_BIG(*)   from @cdmSchema.person)
++(select COUNT_BIG(*)  from @cdmSchema.observation)
++(select COUNT_BIG(*)  from @cdmSchema.condition_occurrence)
++(select COUNT_BIG(*)  from @cdmSchema.drug_exposure)
++(select COUNT_BIG(*)  from @cdmSchema.visit_occurrence)
++(select COUNT_BIG(*)  from @cdmSchema.death)
++(select COUNT_BIG(*)  from @cdmSchema.procedure_occurrence) cnt
 ) a
 ;
 
@@ -91,7 +91,7 @@ select
 select  'D2',a.cnt, 'count of patients with at least 1 Dx and 1 Rx'
 FROM
 (
-  select count(*) cnt from
+  select COUNT_BIG(*) cnt from
   (
   select distinct person_id from @cdmSchema.condition_occurrence
   intersect
@@ -105,7 +105,7 @@ FROM
 select  'D3',a.cnt, 'count of patients with at least 1 Dx and 1 Proc'
 FROM
 (
-  select count(*) cnt from
+  select COUNT_BIG(*) cnt from
   (
   select distinct person_id from @cdmSchema.condition_occurrence
   intersect
@@ -119,7 +119,7 @@ FROM
 select  'D4',a.cnt, 'count of patients with at least 1 Obs, 1 Dx and 1 Rx'
 FROM
 (
-  select count(*) cnt from
+  select COUNT_BIG(*) cnt from
   (
   select distinct person_id from @cdmSchema.observation
   intersect
@@ -135,7 +135,7 @@ FROM
 select  'D5',a.cnt, 'count of deceased patients'
 FROM
 (
-  select count(*) cnt from @cdmSchema.death  
+  select COUNT_BIG(*) cnt from @cdmSchema.death  
 ) a
 ;
 
