@@ -36,9 +36,9 @@ loadOhdsiStudy <- function(file,
 #'
 #' @export
 saveOhdsiStudy <- function(list,
-													 file,
-													 compress = "xz",
-													 includeMetadata = TRUE) {
+                           file,
+                           compress = FALSE,
+                           includeMetadata = TRUE) {
 
 	if (missing(list)) {
 		stop("Must provide object list to save")
