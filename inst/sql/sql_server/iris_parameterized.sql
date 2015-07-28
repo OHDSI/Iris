@@ -116,15 +116,17 @@ iris_dead AS ( --- CTE
 
 -- a single select returns concatenated CTEs
 
-SELECT * FROM iris_person
-UNION ALL
-SELECT * FROM iris_event
-UNION ALL
-SELECT * FROM iris_dx_rx
-UNION ALL
-SELECT * FROM iris_dx_proc
-UNION ALL
-SELECT * FROM iris_obs_dx_rx
-UNION ALL
-SELECT * FROM iris_dead
+SELECT * FROM (
+    SELECT * FROM iris_person
+    UNION ALL
+    SELECT * FROM iris_event
+    UNION ALL
+    SELECT * FROM iris_dx_rx
+    UNION ALL
+    SELECT * FROM iris_dx_proc
+    UNION ALL
+    SELECT * FROM iris_obs_dx_rx
+    UNION ALL
+    SELECT * FROM iris_dead
+) concat ORDER BY measure
 ;

@@ -4,7 +4,7 @@
 \alias{saveOhdsiStudy}
 \title{Save OHDSI study}
 \usage{
-saveOhdsiStudy(list, file, compress = "xz", includeMetadata = TRUE)
+saveOhdsiStudy(list, file, compress = FALSE, includeMetadata = TRUE)
 }
 \arguments{
 \item{list}{A list of R objects to save to disk file.}
