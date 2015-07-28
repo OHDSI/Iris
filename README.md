@@ -12,6 +12,8 @@ Future versions may use the NOTES table and will include an option to generate S
 
 ```R
 install.packages("devtools")
+devtools::install_github("OHDSI/SqlRender")
+devtools::install_github("ODHSI/DatabaseConnector")
 devtools::install_github("OHDSI/Iris", ref = "r_package")
 ?Iris::execute # To get extended help
 
