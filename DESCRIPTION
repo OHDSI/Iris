@@ -1,0 +1,20 @@
+Package: Iris
+Title: What the study does (short line)
+Version: 0.1
+Author:
+	Vojtech Huser [cre, aut],
+	Marc A. Suchard [aut]
+Maintainer:
+    Vojtech Huser <vojtech.huser@nih.gov>
+Description: Compute simple demographics from OMOP CDM databases.
+Depends:
+    R (>= 3.1),
+    DatabaseConnector (>= 1.3.0)
+Imports:
+    SqlRender,
+    DBI,
+    mailR
+Suggests:
+    testthat
+License: Apache License 2.0 | file LICENSE
+LazyData: true

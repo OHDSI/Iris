@@ -7,13 +7,35 @@ Future versions may use the NOTES table and will include an option to generate S
 
 #How to use it?
 
-##Simple mode:
-Login to your database
-Grab the SQL code for your database engine and run it.
 
 ##R mode
-Use the R script
 
+```R
+install.packages("devtools")
+devtools::install_github("OHDSI/SqlRender")
+devtools::install_github("ODHSI/DatabaseConnector")
+devtools::install_github("OHDSI/Iris", ref = "r_package")
+?Iris::execute # To get extended help
+
+# Run study
+Iris::execute(dbms = "postgresql",      # Change to participant settings
+              user = "joebruin",
+              password = "supersecret",
+              server = "myserver",
+              cdmSchema = "cdm_schema",
+              cdmVersion = 4)
+
+# Email results file
+Iris::email(from = "collaborator@ohdsi.org",         # Change to participant email address
+      dataDescription = "CDM4 Simulated Data") # Change to participant data description
+```
+
+To reload saved results in `R`
+
+```R
+# Load (or reload) study results
+results <- Iris::loadOhdsiStudy(verbose = TRUE)
+```
 
 #Sample output:
 
