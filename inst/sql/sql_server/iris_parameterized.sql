@@ -35,7 +35,7 @@ description:
 WITH
 iris_person AS ( --- CTE
     select
-        CAST('02G2' AS VARCHAR) AS measure,
+        CAST('G2' AS VARCHAR) AS measure,
         CAST(a.cnt AS BIGINT) AS result,
         CAST('count of patients' AS VARCHAR) AS explanation
     FROM (
@@ -45,7 +45,7 @@ iris_person AS ( --- CTE
 
 iris_event AS ( --- CTE
     select
-        CAST('01G1' AS VARCHAR) AS measure,
+        CAST('G1' AS VARCHAR) AS measure,
         CAST(a.cnt AS BIGINT) AS result,
         CAST('count of events' AS VARCHAR) AS explanation
     FROM (
