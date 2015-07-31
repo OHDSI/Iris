@@ -1,7 +1,7 @@
 # Iris
 IRIS provides a high-level descriptive summary of a population within a OMOP CDM-compliant database
 
-This early version 0.1 uses CDM v4 but in fact will also run on CDM v5
+This version 1.0 uses CDM v4 but in fact will also run on CDM v5
 
 Future versions may use the NOTES table and will include an option to generate SQL for CDM v5 or for CDM v4.
 
