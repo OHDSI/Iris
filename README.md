@@ -20,12 +20,21 @@ devtools::install_github("OHDSI/Iris")
 ?Iris::execute # To get extended help
 
 # Run study
-Iris::execute(dbms = "postgresql",      # Change to participant settings
+a<-Iris::execute(dbms = "postgresql",      # Change to participant settings
               user = "joebruin",
               password = "supersecret",
               server = "myserver",
               cdmSchema = "cdm_schema",
               cdmVersion = 4)
+#show timing again
+a$executionTime
+
+#show results
+a$result
+
+#write to a file
+write.csv(a$result,file='iris-results.csv',row.names = F)
+
 
 # Email results file
 Iris::email(from = "collaborator@ohdsi.org",         # Change to participant email address
@@ -39,7 +48,7 @@ To reload saved results in `R`
 results <- Iris::loadOhdsiStudy(verbose = TRUE)
 ```
 
-#Sample output:
+#Sample output (for v1.0):
 
     MEASURE     RESULT     EXPLANATION
     G1     141,805,491        count of patients
