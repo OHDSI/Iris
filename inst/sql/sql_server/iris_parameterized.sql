@@ -56,6 +56,7 @@ iris_event AS ( --- CTE
             +(select COUNT_BIG(*)  from @cdmSchema.drug_exposure)
             +(select COUNT_BIG(*)  from @cdmSchema.visit_occurrence)
             +(select COUNT_BIG(*)  from @cdmSchema.death)
+            +(select COUNT_BIG(*)  from @cdmSchema.observation)
             +(select COUNT_BIG(*)  from @cdmSchema.procedure_occurrence) cnt
     ) a
 ),
@@ -92,10 +93,10 @@ iris_obs_dx_rx AS ( --- CTE
     select
         CAST('D4' AS VARCHAR) AS measure,
         CAST(a.cnt AS BIGINT) AS result,
-        CAST('count of patients with at least 1 Obs, 1 Dx and 1 Rx' AS VARCHAR) AS explanation
+        CAST('count of patients with at least 1 Meas, 1 Dx and 1 Rx' AS VARCHAR) AS explanation
     FROM (
         select COUNT_BIG(*) cnt from (
-            select distinct person_id from @cdmSchema.observation
+            select distinct person_id from @cdmSchema.measurement
             intersect
             select distinct person_id from @cdmSchema.condition_occurrence
             intersect
