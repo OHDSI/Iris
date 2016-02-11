@@ -52,7 +52,7 @@ execute <- function(dbms, user = NULL, domain = NULL, password = NULL, server,
                     cdmVersion = 5,
                     file) {
     #check version
-    if (cdmVersion==5) {
+    if (cdmVersion == 4) {
         stop("Iris was extended in 2016 to accomodate CDM v5 tables. Iris officialy only supports CDM v5.")
     }
 
