@@ -1,8 +1,8 @@
 #' @title Execute OHDSI Iris
 #'
 #' @details
-#' This function executes OHDSI Iris and emails the results directly to Vojtech Huser.
-#' Iris ...  (GIVE SOME DETAILS).
+#' This function executes OHDSI Iris.
+#' Iris computes some basic parameters about a dataset.
 #'
 #' @return
 #' Study results are placed in CSV format files in specified local folder and returned
@@ -49,8 +49,13 @@
 execute <- function(dbms, user = NULL, domain = NULL, password = NULL, server,
                     port = NULL,
                     cdmSchema,
-                    cdmVersion = 4,
+                    cdmVersion = 5,
                     file) {
+    #check version
+    if (cdmVersion==5) {
+        stop("Iris was extended in 2016 to accomodate CDM v5 tables. Iris officialy only supports CDM v5.")
+    }
+
     # Open DB connection
     connectionDetails <- DatabaseConnector::createConnectionDetails(dbms = dbms,
                                                                     server = server,
