@@ -108,6 +108,60 @@ execute <- function(dbms, user = NULL, domain = NULL, password = NULL, server,
     invisible(result)
 }
 
+
+execute2 <- function(connectionDetails,
+                    cdmVersion = 5,
+                    file = 'iris2results.ohdsi') {
+    #check version
+    if (cdmVersion == 4) {
+        stop("Iris was extended in 2016 to accomodate CDM v5 tables. Iris officialy only supports CDM v5.")
+    }
+
+
+    conn <- DatabaseConnector::connect(connectionDetails)
+    if (is.null(conn)) {
+        stop("Failed to connect to db server.")
+    }
+
+    # Record start time
+    start <- Sys.time()
+
+    # Load, render and translate SQL
+    sql <- SqlRender::loadRenderTranslateSql(sqlFilename =  "iris_parameterized_2.sql",
+                                             dbms = connectionDetails$dbms,
+                                             packageName = "Iris",
+                                             cdmSchema = connectionDetails$schema,
+                                             cdmVersion = cdmVersion)
+
+    writeLines(paste("Executing Iris Two on",connectionDetails$schema,"..."))
+    result <- DatabaseConnector::querySql(conn, sql)
+
+    # Execution duration
+    executionTime <- Sys.time() - start
+    writeLines(paste("Execution time:", format(executionTime)))
+
+    # List of R objects to save
+    objectsToSave <- c(
+        "result",
+        "executionTime"
+    )
+
+    # Results are small, so print to screen; should provide users with a sense of accomplishment
+    print(result)
+
+    # Save results to disk
+    if (missing(file)) file <- getDefaultStudyFileName()
+    saveOhdsiStudy(list = objectsToSave, file = file)
+
+    # Clean up
+    DBI::dbDisconnect(conn)
+
+    # Package and return result if return value is used
+    result <- mget(objectsToSave)
+    class(result) <- "OhdsiStudy"
+    invisible(result)
+}
+
 # Package must provide a default gmail address to receive result files
 #' @keywords internal
 getDestinationAddress <- function() { return("nobody@gmail.com") }
