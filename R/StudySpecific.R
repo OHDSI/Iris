@@ -162,6 +162,88 @@ execute2 <- function(connectionDetails,
     invisible(result)
 }
 
+
+
+executePart <- function(part=1,connectionDetails,
+                     cdmVersion = 5,
+                     file = 'iris2results.ohdsi') {
+    #check version
+    if (cdmVersion == 4) {stop("Iris was extended in 2016 to accomodate CDM v5 tables. Iris officialy only supports CDM v5.")
+    }
+
+
+    conn <- DatabaseConnector::connect(connectionDetails)
+    if (is.null(conn)) {
+        stop("Failed to connect to db server.")
+    }
+
+    # Record start time
+    start <- Sys.time()
+
+
+    #get file name of the part
+    fname=paste0('iris_parameterized_',part,'.sql')
+    writeLines(fname)
+    # Load, render and translate SQL
+
+    sql <- SqlRender::loadRenderTranslateSql(sqlFilename =  fname,
+                                             dbms = connectionDetails$dbms,
+                                             packageName = "Iris",
+                                             cdmSchema = connectionDetails$schema,
+                                             cdm_database_schema = connectionDetails$schema,
+                                             cdmVersion = cdmVersion,
+                                             oracleTempSchema = connectionDetails$oracleTempSchema,
+                                             target_database_schema=connectionDetails$target_database_schema,
+                                             results_database_schema=connectionDetails$target_database_schema
+                                             )
+
+    #TODO ... suport parameters passed from initial function
+
+    cat(sql,file=paste0(connectionDetails$dbms,'-',fname))
+    writeLines(paste("Executing Iris Part",part,'on',connectionDetails$schema,"..."))
+    result <- DatabaseConnector::querySql(conn, sql)
+
+    # Execution duration
+    executionTime <- Sys.time() - start
+    writeLines(paste("Execution time:", format(executionTime)))
+
+    # List of R objects to save
+    objectsToSave <- c(
+        "result",
+        "executionTime"
+    )
+
+    # Results are small, so print to screen; should provide users with a sense of accomplishment
+    print(result)
+
+    # Save results to disk
+    if (missing(file)) file <- getDefaultStudyFileName()
+    saveOhdsiStudy(list = objectsToSave, file = file)
+
+    # Clean up
+    DBI::dbDisconnect(conn)
+
+    # Package and return result if return value is used
+    result <- mget(objectsToSave)
+    class(result) <- "OhdsiStudy"
+    invisible(result)
+}
+
+
+# writeLines("- Creating treatment cohort")
+# sql <- SqlRender::loadRenderTranslateSql("Treatment.sql",
+#                                          "CelecoxibVsNsNSAIDs",
+#                                          dbms = connectionDetails$dbms,
+#                                          oracleTempSchema = oracleTempSchema,
+#                                          cdm_database_schema = cdmDatabaseSchema,
+#                                          target_database_schema = workDatabaseSchema,
+#                                          target_cohort_table = studyCohortTable,
+#                                          cohort_definition_id = 1)
+# #write to disk for review
+# DatabaseConnector::executeSql(conn, sql)
+#
+
+
 # Package must provide a default gmail address to receive result files
 #' @keywords internal
 getDestinationAddress <- function() { return("nobody@gmail.com") }
