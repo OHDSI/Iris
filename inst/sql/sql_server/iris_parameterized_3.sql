@@ -55,7 +55,7 @@ where  (select count(*) from @results_database_schema.achilles_results where ana
 
 UNION
 SELECT 501 as analysis_id,
-  'WARNING: percentage of deceased patients (deceased/all person count * 100)  is less than threshold' as ACHILLES_HEEL_warning,
+  'WARNING: %  of deceased pts  (deceased/all * 100)  is <  threshold' as ACHILLES_HEEL_warning,
 	28 as rule_id,
    (select sum(count_value)  from @results_database_schema.achilles_results where analysis_id = 501 group by analysis_id)*100.0/(select count_value  from @results_database_schema.achilles_results where analysis_id = 1)
  as count_value
@@ -63,7 +63,7 @@ SELECT 501 as analysis_id,
 WHERE (select sum(count_value)  from @results_database_schema.achilles_results where analysis_id = 501 group by analysis_id)*100.0/(select count_value  from @results_database_schema.achilles_results where analysis_id = 1) < 40
 
 UNION
-select null as analysis_id, 'warning: measurement rows with no time data are over threshold' as achilles_heel_warning
+select null as analysis_id, 'WARNING: measurement rows with no time data > threshold' as achilles_heel_warning
 ,34 as rule_id,
 (select count(*) from @cdm_database_schema.measurement where measurement_time is null)*100.0/ (select count(*) from @cdm_database_schema.measurement) as count_value
 where (select count(*) from @cdm_database_schema.measurement where measurement_time is null)*100.0/ (select count(*) from @cdm_database_schema.measurement) > 50
