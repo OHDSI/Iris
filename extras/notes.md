@@ -1,6 +1,27 @@
 This file contains various notes for Iris development
 
 
+#running Iris just after you executed Achilles or just Achilles Heel
+
+```R
+#install Iris (assumes you have  devtools library installed)
+devtools::install_github("OHDSI/Iris")
+
+#re-use your connection object and point to the same "results" database but add where the results schema is it
+connectionDetails$target_database_schema='results'
+
+
+#execute experimental parts of Iris by changing the part parameter (e.g., 2) 
+#(see the SQL Iris folder to see all experimental parts)
+iPart<-Iris:::executePart(part=1,connectionDetails,cdmVersion = 5)
+iPart<-Iris:::executePart(part=2,connectionDetails,cdmVersion = 5)
+iPart<-Iris:::executePart(part=3,connectionDetails,cdmVersion = 5)
+
+
+```
+
+
+
 #More SQL files
 To pilot new ideas quickly (and not let people wait for full Iris results), the SQL code is now split
 into more parts. (see SQL folder). To execute just part of Iris, alternative execute functions are used. (internal, so use triple semicolon to get to it)

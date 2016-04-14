@@ -37,4 +37,18 @@ FROM added  or1
 --INNER JOIN @results_database_schema.ACHILLES_analysis oa1	ON or1.analysis_id = oa1.analysis_id
 WHERE or1.analysis_id IN (499,699,799,899,1899)
 --the intended threshold is 1 percent, this value is there to get pilot data from early adopters
-	AND or1.count_value >= 0.05;
+	AND or1.count_value >= 0.05
+
+UNION
+
+--US centric measure (by country in EU or Asia)
+select null as analysis_id,  'WARNING: data from less than 3 states  (affects generalizability) or state data is missing from LOCATION table' as ACHILLES_HEEL_warning,
+32 as rule_id
+,null as count_value
+where  (select count(*) from @results_database_schema.achilles_results where analysis_id = 1101) <=3
+
+UNION
+select 1100 as analysis_id,  'WARNING: data by 3-digit zip region are not recorded in the PERSON table' as ACHILLES_HEEL_warning,
+33 as rule_id
+,null as count_value
+where  (select count(*) from @results_database_schema.achilles_results where analysis_id = 1100) =0 ;
