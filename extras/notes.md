@@ -18,7 +18,7 @@ connectionDetails$schema='cdm5_inst'
 
 #execute experimental parts of Iris by changing the part parameter (e.g., 2) 
 #(see the SQL Iris folder to see all experimental parts)
-iPart<-Iris:::executePart(part=1,connectionDetails,cdmVersion = 5)
+
 iPart<-Iris:::executePart(part=2,connectionDetails,cdmVersion = 5)
 iPart<-Iris:::executePart(part=3,connectionDetails,cdmVersion = 5)
 
