@@ -7,8 +7,13 @@ This file contains various notes for Iris development
 #install Iris (assumes you have  devtools library installed)
 devtools::install_github("OHDSI/Iris")
 
-#re-use your connection object and point to the same "results" database but add where the results schema is it
+#re-use your connection object and point to the same "results" database but add where the results schema is 
 connectionDetails$target_database_schema='results'
+
+#also make sure you original set up of connectionDetails included a parameter called schema. 
+#If not add it like this (otherwise the final execute call will fail) (think myCdm)
+connectionDetails$schema='cdm5_inst'
+
 
 
 #execute experimental parts of Iris by changing the part parameter (e.g., 2) 
