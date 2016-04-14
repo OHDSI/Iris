@@ -45,10 +45,27 @@ UNION
 select null as analysis_id,  'WARNING: data from less than 3 states  (affects generalizability) or state data is missing from LOCATION table' as ACHILLES_HEEL_warning,
 32 as rule_id
 ,null as count_value
-where  (select count(*) from @results_database_schema.achilles_results where analysis_id = 1101) <=3
+where  (select count(*) from @results_database_schema.achilles_results where analysis_id = 1101) <3
 
 UNION
 select 1100 as analysis_id,  'WARNING: data by 3-digit zip region are not recorded in the PERSON table' as ACHILLES_HEEL_warning,
 33 as rule_id
 ,null as count_value
-where  (select count(*) from @results_database_schema.achilles_results where analysis_id = 1100) =0 ;
+where  (select count(*) from @results_database_schema.achilles_results where analysis_id = 1100) =0
+
+UNION
+SELECT 501 as analysis_id,
+  'WARNING: percentage of deceased patients (deceased/all person count * 100)  is less than threshold' as ACHILLES_HEEL_warning,
+	28 as rule_id,
+   (select sum(count_value)  from @results_database_schema.achilles_results where analysis_id = 501 group by analysis_id)*100.0/(select count_value  from @results_database_schema.achilles_results where analysis_id = 1)
+ as count_value
+--tweak number at the end to change the warning threshold
+WHERE (select sum(count_value)  from @results_database_schema.achilles_results where analysis_id = 501 group by analysis_id)*100.0/(select count_value  from @results_database_schema.achilles_results where analysis_id = 1) < 40
+
+UNION
+select null as analysis_id, 'warning: measurement rows with no time data are over threshold' as achilles_heel_warning
+,34 as rule_id,
+(select count(*) from @cdm_database_schema.measurement where measurement_time is null)*100.0/ (select count(*) from @cdm_database_schema.measurement) as count_value
+where (select count(*) from @cdm_database_schema.measurement where measurement_time is null)*100.0/ (select count(*) from @cdm_database_schema.measurement) > 50
+
+;
