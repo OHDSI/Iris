@@ -183,7 +183,7 @@ executePart <- function(part=1,connectionDetails,
 
     #get file name of the part
     fname=paste0('iris_parameterized_',part,'.sql')
-    writeLines(fname)
+
     # Load, render and translate SQL
 
     sql <- SqlRender::loadRenderTranslateSql(sqlFilename =  fname,
