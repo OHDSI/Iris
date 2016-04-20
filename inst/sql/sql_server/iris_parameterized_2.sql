@@ -1,38 +1,16 @@
 /*********************************************************************************
-# Copyright 2015 Observational Health Data Sciences and Informatics
-#
-#
+# Copyright 2016 Observational Health Data Sciences and Informatics
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
 ********************************************************************************/
-
 /************************
-
-script to evaluate CDM repository
-
-last revised: July 21 2015
-
-author:  Vojtech Huser
-modifications by: Marc Suchard
-
-description:
-
+last revised: April 2016  author:  Vojtech Huser
 *************************/
 
+
 --start of analysis
-
--- Use CTEs as suggest by SqlRender vignette so no temporary tables nor Oracle write-permissions are necessary
-
-
+--analysis of how many source values are in source and into how many distinct concept_ids these are mapped
+--and also including unmapped source_values
 
 select 'measurement' as domain,
 (select COUNT_BIG(distinct measurement_concept_id) from @cdmSchema.measurement) as target_cnt,
