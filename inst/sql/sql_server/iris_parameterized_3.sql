@@ -8,6 +8,10 @@ last revised: April 2016  author:  Vojtech Huser
 *************************/
 
 
+--testing some new rules for Achilles Heel
+--ACHILLES_HEEL_warning text provides some hint about what the rule is trying to do
+
+
 --insert into achilles_results(analysis_id,count_value)
 with t1 as 	(
 	  select analysis_id,sum(count_value) as all_cnt from @results_database_schema.achilles_results where analysis_id in (401,601,701,801,1801) group by analysis_id

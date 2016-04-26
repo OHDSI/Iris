@@ -25,6 +25,8 @@ description: rewrite to be better compatible with Achilles-Pre-computations
 
 *************************/
 
+--early rewrite of original Iris rules (removing those that are already in Achilles)
+--to make it more compatible with other Achilles
 
 
 WITH
