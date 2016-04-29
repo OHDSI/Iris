@@ -58,15 +58,17 @@ We do encourage you to email feedback to vojtech huser at nih dot gov.  (even if
 
 #Rule notes
 
---rules
+Heel should allow for some "US centric measures"  (even though they may not apply world wide). CDMv5 has some "US centric features". 
 
-Yes vote 27,iris3," % of unmapped rows,"looks for concept 0 mapped rows in multiple tables and generates output if over a threshold" (not as percentage)
+
+    Yes vote 27,iris3," % of unmapped rows,"looks for concept 0 mapped rows in multiple tables and generates output if over a threshold" (not as percentage)
 
     		 28,iris3,"percentage of deceased patients","for general population this should be over certain threshold"
          32,iris3,"data from < 3 states"  (US centric)
     no vote	 38, data from les than <2 countries  
     ? vote   33,i3,"W:data by 3 digit zip are not recorded in PERSON table  (not global)
-    No vote  34,i3,"w:measuremtn rows with no time data are over threshold
+    No vote  34(should rename),i3,"w:measuremtn rows with no time data are over threshold
     Yes vote 35,TODO, w:new measure added to Achilles,ALL VALUES ARE NON NUMERICAL (strange), indicates "mapping based measurement data"
     36 count   ration providers/patients is too low
+    34, percentage of unmapped row (in rule overview huser_dev)
 
