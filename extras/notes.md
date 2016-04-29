@@ -54,3 +54,19 @@ Execution time: 3.260972 secs
 
 ```
 We do encourage you to email feedback to vojtech huser at nih dot gov.  (even if you just sucesfully ran the tool)
+
+
+#Rule notes
+
+--rules
+
+Yes vote 27,iris3," % of unmapped rows,"looks for concept 0 mapped rows in multiple tables and generates output if over a threshold" (not as percentage)
+
+    		 28,iris3,"percentage of deceased patients","for general population this should be over certain threshold"
+         32,iris3,"data from < 3 states"  (US centric)
+    no vote	 38, data from les than <2 countries  
+    ? vote   33,i3,"W:data by 3 digit zip are not recorded in PERSON table  (not global)
+    No vote  34,i3,"w:measuremtn rows with no time data are over threshold
+    Yes vote 35,TODO, w:new measure added to Achilles,ALL VALUES ARE NON NUMERICAL (strange), indicates "mapping based measurement data"
+    36 count   ration providers/patients is too low
+
