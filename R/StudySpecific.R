@@ -168,6 +168,7 @@ execute2 <- function(connectionDetails,
 #'
 #' @details
 #' This function executes a logical part of Iris (easier for testing of multiple parts)
+#' @importFrom DBI dbDisconnect
 #' @export
 executePart <- function(part=1,connectionDetails,
                      cdmVersion = 5,
@@ -204,7 +205,7 @@ executePart <- function(part=1,connectionDetails,
 
     #TODO ... suport parameters passed from initial function
 
-    cat(sql,file=paste0(connectionDetails$dbms,'-',fname))
+    #cat(sql,file=paste0(connectionDetails$dbms,'-',fname))
     writeLines(paste("Executing Iris Part",part,'on',connectionDetails$schema,"..."))
     result <- DatabaseConnector::querySql(conn, sql)
 
@@ -220,7 +221,7 @@ executePart <- function(part=1,connectionDetails,
     print(head(result))
 
     # Save results to disk
-    write.csv(iPart,paste0(connectionDetails$schema,'-iris_part-',part,'.csv'),na='',row.names=F)
+    write.csv(result,paste0(connectionDetails$schema,'-iris_part-',part,'.csv'),na='',row.names=F)
     #if (missing(file)) file <- getDefaultStudyFileName()
     #saveOhdsiStudy(list = objectsToSave, file = file)
 
