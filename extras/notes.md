@@ -1,5 +1,9 @@
 This file contains various notes for Iris development
 
+#changes
+In May 2016 - most original Iris measures were incorporated into Achilles
+Iris is being used for new features and data quality
+
 
 #running Iris just after you executed Achilles or just Achilles Heel
 
