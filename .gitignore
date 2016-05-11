@@ -1,5 +1,9 @@
 .Rproj.user
 .Rhistory
 .RData
+.csv
 R/TestCode.R
 errorReport.txt
+*.csv
+ccae_v5-out.pdf
+iris-export.zip

@@ -109,59 +109,59 @@ execute <- function(dbms, user = NULL, domain = NULL, password = NULL, server,
 }
 
 
-execute2 <- function(connectionDetails,
-                    cdmVersion = 5,
-                    file = 'iris2results.ohdsi') {
-    #check version
-    if (cdmVersion == 4) {
-        stop("Iris was extended in 2016 to accomodate CDM v5 tables. Iris officialy only supports CDM v5.")
-    }
-
-
-    conn <- DatabaseConnector::connect(connectionDetails)
-    if (is.null(conn)) {
-        stop("Failed to connect to db server.")
-    }
-
-    # Record start time
-    start <- Sys.time()
-
-    # Load, render and translate SQL
-    sql <- SqlRender::loadRenderTranslateSql(sqlFilename =  "iris_parameterized_2.sql",
-                                             dbms = connectionDetails$dbms,
-                                             packageName = "Iris",
-                                             cdmSchema = connectionDetails$schema,
-                                             cdmVersion = cdmVersion)
-
-    writeLines(paste("Executing Iris Two on",connectionDetails$schema,"..."))
-    result <- DatabaseConnector::querySql(conn, sql)
-
-    # Execution duration
-    executionTime <- Sys.time() - start
-    writeLines(paste("Execution time:", format(executionTime)))
-
-    # List of R objects to save
-    objectsToSave <- c(
-        "result",
-        "executionTime"
-    )
-
-    # Results are small, so print to screen; should provide users with a sense of accomplishment
-    print(result)
-
-    # Save results to disk
-    if (missing(file)) file <- getDefaultStudyFileName()
-    saveOhdsiStudy(list = objectsToSave, file = file)
-
-    # Clean up
-    DBI::dbDisconnect(conn)
-
-    # Package and return result if return value is used
-    result <- mget(objectsToSave)
-    class(result) <- "OhdsiStudy"
-    invisible(result)
-}
-
+# execute2 <- function(connectionDetails,
+#                     cdmVersion = 5,
+#                     file = 'iris2results.ohdsi') {
+#     #check version
+#     if (cdmVersion == 4) {
+#         stop("Iris was extended in 2016 to accomodate CDM v5 tables. Iris officialy only supports CDM v5.")
+#     }
+#
+#
+#     conn <- DatabaseConnector::connect(connectionDetails)
+#     if (is.null(conn)) {
+#         stop("Failed to connect to db server.")
+#     }
+#
+#     # Record start time
+#     start <- Sys.time()
+#
+#     # Load, render and translate SQL
+#     sql <- SqlRender::loadRenderTranslateSql(sqlFilename =  "iris_parameterized_2.sql",
+#                                              dbms = connectionDetails$dbms,
+#                                              packageName = "Iris",
+#                                              cdmSchema = connectionDetails$schema,
+#                                              cdmVersion = cdmVersion)
+#
+#     writeLines(paste("Executing Iris Two on",connectionDetails$schema,"..."))
+#     result <- DatabaseConnector::querySql(conn, sql)
+#
+#     # Execution duration
+#     executionTime <- Sys.time() - start
+#     writeLines(paste("Execution time:", format(executionTime)))
+#
+#     # List of R objects to save
+#     objectsToSave <- c(
+#         "result",
+#         "executionTime"
+#     )
+#
+#     # Results are small, so print to screen; should provide users with a sense of accomplishment
+#     print(result)
+#
+#     # Save results to disk
+#     if (missing(file)) file <- getDefaultStudyFileName()
+#     saveOhdsiStudy(list = objectsToSave, file = file)
+#
+#     # Clean up
+#     DBI::dbDisconnect(conn)
+#
+#     # Package and return result if return value is used
+#     result <- mget(objectsToSave)
+#     class(result) <- "OhdsiStudy"
+#     invisible(result)
+# }
+#
 
 
 #' @title Execute Iris Part  (testing new components)
@@ -219,7 +219,7 @@ executePart <- function(part=1,connectionDetails,
     # Results are small, so print to screen; should provide users with a sense of accomplishment
     writeLines("Top few rows of result")
     print(head(result))
-
+    result$dataset=connectionDetails$schema
     # Save results to disk
     write.csv(result,paste0(connectionDetails$schema,'-iris_part-',part,'.csv'),na='',row.names=F)
     #if (missing(file)) file <- getDefaultStudyFileName()
@@ -258,9 +258,9 @@ achillesShare <- function (connectionDetails,
                       vocabDatabaseSchema = cdmDatabaseSchema){
 
 
-    cdmDatabase <- strsplit(cdmDatabaseSchema ,"\\.")[[1]][1]
-    resultsDatabase <- strsplit(resultsDatabaseSchema ,"\\.")[[1]][1]
-    vocabDatabase <- strsplit(vocabDatabaseSchema ,"\\.")[[1]][1]
+    # cdmDatabase <- strsplit(cdmDatabaseSchema ,"\\.")[[1]][1]
+    # resultsDatabase <- strsplit(resultsDatabaseSchema ,"\\.")[[1]][1]
+    # vocabDatabase <- strsplit(vocabDatabaseSchema ,"\\.")[[1]][1]
 
 #     achillesShareFile='AchillesShare_v5.sql'
 #     achillesShareSql <- loadRenderTranslateSql(sqlFilename = achillesShareFile,
@@ -280,35 +280,55 @@ achillesShare <- function (connectionDetails,
 #                                           vocab_database_schema = vocabDatabaseSchema
 #     )
     # resultsDatabaseSchema='nih'
+
+    #all fethich of results is from results schema, so switch to it
+    #and there is no need for any prefixes in the tiny SQL calls below
+
     connectionDetails$schema=resultsDatabaseSchema
-    conn <- connect(connectionDetails)
+    conn <- DatabaseConnector::connect(connectionDetails)
 
     writeLines("Executing Achilles Share")
     a<-querySql(conn,'select count_value from achilles_results where analysis_id = 1;')
     total_pts<-a[1,1]
 
-    a<-querySql(conn,'select analysis_id, count(*) as cnt from achilles_results group by analysis_id')
-    print(head(a))
-    writeLines("----")
-    print(nrow(a))
+    # a<-querySql(conn,'select analysis_id, count(*) as cnt from achilles_results group by analysis_id')
+    # print(head(a))
+    # writeLines("----")
+    print(total_pts)
+
+    options(scipen = 999)
+    #by # of observation periods
+    a<-querySql(conn,'select analysis_id,stratum_1, count_value from achilles_results where analysis_id = 113')
+    a$statistic_value<-a$COUNT_VALUE/total_pts
+    #print(a)
 
 
-    a<-querySql(conn,'select stratum_1, count_value from achilles_results where analysis_id = 113')
-    summary(a$COUNT_VALUE)
-    summary(a$COUNT_VALUE)
+    writeLines("---- by year  division")
+    population_years<-querySql(conn,'select analysis_id,stratum_1, count_value from achilles_results where analysis_id = 3 order by stratum_1')
+    population_years$statistic_value<-population_years$COUNT_VALUE/total_pts
 
-    writeLines("----")
-    print(sum(a$h)/sum(a$COUNT_VALUE))
 
-    writeLines("-----------------")
-    tta=Achilles::fetchAchillesAnalysisResults(connectionDetails,resultsDatabase = resultsDatabaseSchema,113)$analysisResults
-    print(head(tta))
+    #writeLines(paste(total_pts))
 
-    a$h=as.numeric(a$STRATUM_1)*a$COUNT_VALUE
-    #print(head(a))
+    # early beta of PDF output
+#     pdf(file=paste0(cdmDatabaseSchema,'-out.pdf'))
+#     #print(a)
+#     plot(a$STRATUM_1,a$COUNT_VALUE2)
+#     dev.off()
 
-    writeLines(paste(total_pts))
+
+    # Clean up
+    DBI::dbDisconnect(conn)
     writeLines("Done")
+
+    #output is subject to change
+    output<-rbind(a,population_years)
+    output$COUNT_VALUE<-NULL
+    output<-output[output$statistic_value>0.008,]
+    #merge with more
+    output
+
+
 
 }
 

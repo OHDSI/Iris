@@ -8,6 +8,8 @@ Iris is being used for new features and data quality
 #running Iris just after you executed Achilles or just Achilles Heel
 
 ```R
+#remove older version of Iris
+remove.packages('Iris')
 #install Iris (assumes you have  devtools library installed)
 devtools::install_github("OHDSI/Iris")
 
@@ -18,15 +20,75 @@ connectionDetails$target_database_schema='results'
 #If not add it like this (otherwise the final execute call will fail) (think myCdm)
 connectionDetails$schema='cdm5_inst'
 
-
-
-#execute experimental parts of Iris by changing the part parameter (e.g., 2) 
+#execute experimental parts of Iris by changing the part parameter (e.g., 3) 
 #(see the SQL Iris folder to see all experimental parts)
-
-iPart<-Iris:::executePart(part=2,connectionDetails,cdmVersion = 5)
+source('c:/d/z_connect.R')
 iPart<-Iris:::executePart(part=3,connectionDetails,cdmVersion = 5)
+iPart<-Iris:::executePart(part=6,connectionDetails,cdmVersion = 5)
+
+☺#results are in working R folder ( see it via commnad getwd()  )
+#review .csv files i
 
 
+```
+
+#Executing Iris on multiple datasets (sample code)
+This sample code allows to execute a set of Iris parts on multiple datasets
+
+```R
+
+
+# use this for single dataset Iris ZIP file generation
+ dataLinks=c('ccae_v5');resultsLinks=c('nih')
+
+
+#use this for multiple datasets ZIP file process (modify the strings)
+ dataLinks=c('ccae_v5','mdcr_v5','mdcd_v5')
+ resultsLinks=c('ccae_v5_results','mdcr_v5_results','mdcd_v5_results')
+ #ignore this line resultsLinks=c('nih','nih','nih')
+
+
+
+library(Achilles)
+for (i in seq_along(dataLinks)){
+ print(dataLinks[i])
+ 
+ connectionDetails$schema=dataLinks[i];connectionDetails$target_database_schema=resultsLinks[i]
+ 
+ iPart<-Iris:::executePart(part=2,connectionDetails,cdmVersion = 5)
+ iPart<-Iris:::executePart(part=3,connectionDetails,cdmVersion = 5)
+ iPart<-Iris:::executePart(part=6,connectionDetails,cdmVersion = 5)
+ 
+ #execute early implementation of Achilles Share
+ shareRes<-Iris:::achillesShare(connectionDetails,cdmDatabaseSchema=dataLinks[i],resultsDatabaseSchema=resultsLinks[i])
+ #optionaly include that in export
+  #write.csv(shareRes,paste0(connectionDetails$schema,'-iris_part-',1,'.csv'),na='',row.names=F)
+
+ 
+  #there are some new rules implemented in Achilles (from May 6th) 
+  heelRes<-Achilles:::fetchAchillesHeelResults(connectionDetails,resultsLinks[i])
+  #optionaly include Heel output
+  #write.csv(heelRes,paste0(connectionDetails$schema,'-iris_part-',0,'.csv'),na='',row.names=F)
+  
+ 
+}
+
+zip('iris-export.zip',files='*iris_part*.csv')
+#inspect the zip file to see what is being exported
+
+
+
+
+
+
+#achillesShare (experimental part, for later integration into Achilles)
+source('c:/d/z_connect.R')
+cdmDatabaseSchema       ='ccae_v5'  #modify this for your context e.g.,XYZdata
+resultsDatabaseSchema   ='nih'      #modify this for your context e.g.,XYZresults
+
+Iris:::achillesShare(connectionDetails,cdmDatabaseSchema=cdmDatabaseSchema,resultsDatabaseSchema=resultsDatabaseSchema)
+
+Iris:::executePart
 ```
 
 
