@@ -298,14 +298,29 @@ achillesShare <- function (connectionDetails,
 
     options(scipen = 999)
     #by # of observation periods
-    a<-querySql(conn,'select analysis_id,stratum_1, count_value from achilles_results where analysis_id = 113')
-    a$statistic_value<-a$COUNT_VALUE/total_pts
+    op<-querySql(conn,'select analysis_id,stratum_1, count_value from achilles_results where analysis_id = 113 order by stratum_1')
+    #average number of observation periods
+    op$temp<-as.numeric(op$STRATUM_1) * op$COUNT_VALUE
+    op_average<-sum(op$temp)/sum(op$COUNT_VALUE)
+    op$temp<-NULL
+
+
+
     #print(a)
 
 
-    writeLines("---- by year  division")
+    #writeLines("---- by year  division")
     population_years<-querySql(conn,'select analysis_id,stratum_1, count_value from achilles_results where analysis_id = 3 order by stratum_1')
-    population_years$statistic_value<-population_years$COUNT_VALUE/total_pts
+
+
+    #brief analyses
+    brief<-querySql(conn,'select analysis_id,stratum_1, count_value from achilles_results where analysis_id in (0,410,510) = 3 order by analysis_id,stratum_1')
+    #brief
+
+    #brief distributions
+    #brief_dist<-querySql(conn,'select analysis_id,AVG_VALUE,STDEV_VALUE from achilles_results_dist where analysis_id in (103,105,203,403,513)')
+    brief_dist<-querySql(conn,'select analysis_id,AVG_VALUE,STDEV_VALUE from achilles_results_dist where analysis_id in (103,105,203,403,513)')
+    brief_dist
 
 
     #writeLines(paste(total_pts))
@@ -317,19 +332,45 @@ achillesShare <- function (connectionDetails,
 #     dev.off()
 
 
+
+
+    #output is subject to change
+
+    output<-rbind(op,population_years,brief)
+    output$statistic_value<-output$COUNT_VALUE/total_pts
+
+    #derived measures
+     #percentage of people with exactly one obs period
+
+    one_op<- output[(output$ANALYSIS_ID==113) & (output$STRATUM_1=='1'),4]
+
+
+    #for level 1 mask true values and wipe small rows
+    output$COUNT_VALUE<-NULL
+    output<-output[output$statistic_value>0.008,]
+
+    #mask dataset size into a class
+
+    if (total_pts>100000000) {total_pts_class ='>100M'
+        } else if(total_pts>10000000) {total_pts_class = '10-100M'
+        } else total_pts_class = '<10M'
+    #population size category
+    #average for count of observation periods
+    output<-rbind(output,
+              data.frame(ANALYSIS_ID=100003,STRATUM_1=NA,statistic_value=total_pts_class)
+             ,data.frame(ANALYSIS_ID=100004,STRATUM_1=NA,statistic_value=op_average)
+             ,data.frame(ANALYSIS_ID=100005,STRATUM_1=NA,statistic_value=one_op)
+             )
+
+
+
+
+
+
     # Clean up
     DBI::dbDisconnect(conn)
     writeLines("Done")
-
-    #output is subject to change
-    output<-rbind(a,population_years)
-    output$COUNT_VALUE<-NULL
-    output<-output[output$statistic_value>0.008,]
-    #merge with more
     output
-
-
-
 }
 
 # Package must provide a default gmail address to receive result files

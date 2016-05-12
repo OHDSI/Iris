@@ -132,6 +132,7 @@ Heel should allow for some "US centric measures"  (even though they may not appl
 ```R
 
 #achillesShare (experimental part, for later integration into Achilles)
+library(Achilles)
 source('c:/d/z_connect.R')
 cdmDatabaseSchema       ='ccae_v5'  #modify this for your context e.g.,XYZdata
 resultsDatabaseSchema   ='nih'      #modify this for your context e.g.,XYZresults
