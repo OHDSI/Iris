@@ -5,6 +5,7 @@ In May 2016 - most original Iris measures were incorporated into Achilles
 Iris is being used for new features and data quality
 
 
+
 #running Iris just after you executed Achilles or just Achilles Heel
 
 ```R
@@ -27,8 +28,7 @@ iPart<-Iris:::executePart(part=3,connectionDetails,cdmVersion = 5)
 iPart<-Iris:::executePart(part=6,connectionDetails,cdmVersion = 5)
 
 ☺#results are in working R folder ( see it via commnad getwd()  )
-#review .csv files i
-
+#review .csv files generated or the iPart variable to see the outputs
 
 ```
 
@@ -77,18 +77,6 @@ zip('iris-export.zip',files='*iris_part*.csv')
 #inspect the zip file to see what is being exported
 
 
-
-
-
-
-#achillesShare (experimental part, for later integration into Achilles)
-source('c:/d/z_connect.R')
-cdmDatabaseSchema       ='ccae_v5'  #modify this for your context e.g.,XYZdata
-resultsDatabaseSchema   ='nih'      #modify this for your context e.g.,XYZresults
-
-Iris:::achillesShare(connectionDetails,cdmDatabaseSchema=cdmDatabaseSchema,resultsDatabaseSchema=resultsDatabaseSchema)
-
-Iris:::executePart
 ```
 
 
@@ -96,6 +84,7 @@ Iris:::executePart
 #More SQL files
 To pilot new ideas quickly (and not let people wait for full Iris results), the SQL code is now split
 into more parts. (see SQL folder). To execute just part of Iris, alternative execute functions are used. (internal, so use triple semicolon to get to it)
+
 
 #Connection data 
 Iris plans to use ConnectionDetails method to specify server and login data to various functions.
@@ -138,3 +127,15 @@ Heel should allow for some "US centric measures"  (even though they may not appl
     36 count   ration providers/patients is too low
     34, percentage of unmapped row (in rule overview huser_dev)
 
+
+#Other notes
+```R
+
+#achillesShare (experimental part, for later integration into Achilles)
+source('c:/d/z_connect.R')
+cdmDatabaseSchema       ='ccae_v5'  #modify this for your context e.g.,XYZdata
+resultsDatabaseSchema   ='nih'      #modify this for your context e.g.,XYZresults
+
+Iris:::achillesShare(connectionDetails,cdmDatabaseSchema=cdmDatabaseSchema,resultsDatabaseSchema=resultsDatabaseSchema)
+
+```

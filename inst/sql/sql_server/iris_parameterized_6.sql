@@ -7,6 +7,16 @@
 last revised: April 2016  author:  Vojtech Huser
 *************************/
 
+
+
+
+
+--this functionality is being moved to new function achillesShare
+
+
+
+
+
 --achilles_share_level_1
 --this analysis in in very early beta phase
 --probably best re-written to combine SQL and R processing

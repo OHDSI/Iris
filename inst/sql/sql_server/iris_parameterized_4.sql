@@ -9,6 +9,17 @@ last revised: April 2016  author:  Vojtech Huser
 
 --this report is a pilot for producing a list of unmapped source values across several tables (Rx, Dx, Proc, Meas)
 
+
+
+
+--this has been migrated to Achilles (analysis 1900)
+
+
+
+
+
+
+
 select * from (
 select 'measurement' as table_name,measurement_source_value as source_value, count(*) as cnt from measurement where measurement_concept_id = 0 group by measurement_source_value
 union
