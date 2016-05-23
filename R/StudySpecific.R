@@ -248,6 +248,10 @@ executePart <- function(part=1,connectionDetails,
 # DatabaseConnector::executeSql(conn, sql)
 #
 
+
+
+
+#' Prototype inside Iris for AchillesShare
 #' @export
 achillesShare <- function (connectionDetails,
                       cdmDatabaseSchema,
@@ -257,6 +261,7 @@ achillesShare <- function (connectionDetails,
                       cdmVersion = "5",
                       vocabDatabaseSchema = cdmDatabaseSchema){
 
+#TODO use the new function renderTranslateSql
 
     # cdmDatabase <- strsplit(cdmDatabaseSchema ,"\\.")[[1]][1]
     # resultsDatabase <- strsplit(resultsDatabaseSchema ,"\\.")[[1]][1]
@@ -314,7 +319,7 @@ achillesShare <- function (connectionDetails,
 
 
     #brief analyses
-    brief<-querySql(conn,'select analysis_id,stratum_1, count_value from achilles_results where analysis_id in (0,410,510) = 3 order by analysis_id,stratum_1')
+    brief<-querySql(conn,'select analysis_id,stratum_1, count_value from achilles_results where analysis_id in (0,410,510) order by analysis_id,stratum_1')
     #brief
 
     #brief distributions
@@ -343,11 +348,13 @@ achillesShare <- function (connectionDetails,
      #percentage of people with exactly one obs period
 
     one_op<- output[(output$ANALYSIS_ID==113) & (output$STRATUM_1=='1'),4]
-
+    #if null make it NA
+    one_op<-ifelse(is.null(one_op),NA,one_op)
 
     #for level 1 mask true values and wipe small rows
     output$COUNT_VALUE<-NULL
     output<-output[output$statistic_value>0.008,]
+    output$ANALYSIS_ID<-output$ANALYSIS_ID+100000
 
     #mask dataset size into a class
 
@@ -357,9 +364,9 @@ achillesShare <- function (connectionDetails,
     #population size category
     #average for count of observation periods
     output<-rbind(output,
-              data.frame(ANALYSIS_ID=100003,STRATUM_1=NA,statistic_value=total_pts_class)
-             ,data.frame(ANALYSIS_ID=100004,STRATUM_1=NA,statistic_value=op_average)
-             ,data.frame(ANALYSIS_ID=100005,STRATUM_1=NA,statistic_value=one_op)
+              data.frame(ANALYSIS_ID=110003,STRATUM_1=NA,statistic_value=total_pts_class)
+             ,data.frame(ANALYSIS_ID=110004,STRATUM_1=NA,statistic_value=op_average)
+             ,data.frame(ANALYSIS_ID=110005,STRATUM_1=NA,statistic_value=one_op)
              )
 
 

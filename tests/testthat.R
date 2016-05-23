@@ -1,2 +1,2 @@
 library(testthat)
-test_check("SkeletonStudy") # Change to package name
+test_check("Iris") # Change to package name

@@ -13,21 +13,22 @@ test_that("Execute against empty OMOP CDM databases", {
 
     expect_equal(length(result1),executeResultSize)
 
-    result2 <- execute(dbms = "sql server",
-                       server="jenkins.ohdsi.org",
-                       user = "patrick",
-                       password = "gh_56Fd8L",
-                       port = 1433,
-                       cdmSchema = "CDMV5")
+#     result2 <- execute(dbms = "sql server",
+#                        server="jenkins.ohdsi.org",
+#                        user = "patrick",
+#                        password = "gh_56Fd8L",
+#                        port = 1433,
+#                        cdmSchema = "CDMV5")
+#
+#     expect_equal(length(result2),executeResultSize)
 
-    expect_equal(length(result2),executeResultSize)
-
-    result3 <- execute(dbms = "oracle",
-                       server="jenkins.ohdsi.org/XE",
-                       user = "patrick",
-                       password = "gh_56Fd8L",
-                       #port = 1521,
-                       cdmSchema = "CDMV5")
-
-    expect_equal(length(result3),executeResultSize)
+#     result3 <- execute(dbms = "oracle",
+#                        server="jenkins.ohdsi.org/XE",
+#                        user = "patrick",
+#                        password = "gh_56Fd8L",
+#                        #port = 1521,
+#                        cdmSchema = "CDMV5")
+#
+#     expect_equal(length(result3),executeResultSize)
 })
+

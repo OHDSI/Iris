@@ -53,16 +53,17 @@ library(Achilles)
 for (i in seq_along(dataLinks)){
  print(dataLinks[i])
  
- connectionDetails$schema=dataLinks[i];connectionDetails$target_database_schema=resultsLinks[i]
+ cdmDatabase
+ connectionDetails$schema=dataLinks[i];connectionDetails$target_database_schema=recdmDatabaseSchema=dataLinks[i];resultsDatabaseSchema=resultsLinks[i]
  
  iPart<-Iris:::executePart(part=2,connectionDetails,cdmVersion = 5)
  iPart<-Iris:::executePart(part=3,connectionDetails,cdmVersion = 5)
  iPart<-Iris:::executePart(part=6,connectionDetails,cdmVersion = 5)
  
  #execute early implementation of Achilles Share
- shareRes<-Iris:::achillesShare(connectionDetails,cdmDatabaseSchema=dataLinks[i],resultsDatabaseSchema=resultsLinks[i])
+ shareRes<-Iris:::achillesShare(connectionDetails,cdmDatabaseSchema=cdmDatabaseSchema,resultsDatabaseSchema=resultsDatabaseSchema)
  #optionaly include that in export
-  #write.csv(shareRes,paste0(connectionDetails$schema,'-iris_part-',1,'.csv'),na='',row.names=F)
+  #write.csv(shareRes,paste0(cdmDatabaseSchema,'-iris_part-',1,'.csv'),na='',row.names=F)
 
  
   #there are some new rules implemented in Achilles (from May 6th) 
