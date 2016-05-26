@@ -36,7 +36,7 @@ iPart<-Iris:::executePart(part=6,connectionDetails,cdmVersion = 5)
 This sample code allows to execute a set of Iris parts on multiple datasets
 
 ```R
-
+#use your previous connectionDetails object with username and psw for database
 
 # use this for single dataset Iris ZIP file generation
  dataLinks=c('ccae_v5');resultsLinks=c('nih')
@@ -53,8 +53,9 @@ library(Achilles)
 for (i in seq_along(dataLinks)){
  print(dataLinks[i])
  
- cdmDatabase
- connectionDetails$schema=dataLinks[i];connectionDetails$target_database_schema=recdmDatabaseSchema=dataLinks[i];resultsDatabaseSchema=resultsLinks[i]
+ cdmDatabaseSchema=dataLinks[i];resultsDatabaseSchema=resultsLinks[i]
+ connectionDetails$schema=cdmDatabaseSchema
+ connectionDetails$target_database_schema=resultsDatabaseSchema
  
  iPart<-Iris:::executePart(part=2,connectionDetails,cdmVersion = 5)
  iPart<-Iris:::executePart(part=3,connectionDetails,cdmVersion = 5)
@@ -69,7 +70,7 @@ for (i in seq_along(dataLinks)){
   #there are some new rules implemented in Achilles (from May 6th) 
   heelRes<-Achilles:::fetchAchillesHeelResults(connectionDetails,resultsLinks[i])
   #optionaly include Heel output
-  #write.csv(heelRes,paste0(connectionDetails$schema,'-iris_part-',0,'.csv'),na='',row.names=F)
+  write.csv(heelRes,paste0(connectionDetails$schema,'-iris_part-',0,'.csv'),na='',row.names=F)
   
  
 }
