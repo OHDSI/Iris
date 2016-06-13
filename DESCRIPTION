@@ -1,6 +1,6 @@
 Package: Iris
 Title: What the study does (short line)
-Version: 1.1
+Version: 1.2
 Author: Vojtech Huser [cre, aut],
     Marc A. Suchard [aut]
 Maintainer: Vojtech Huser <vojtech.huser@nih.gov>

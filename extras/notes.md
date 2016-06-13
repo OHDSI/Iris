@@ -39,7 +39,7 @@ This sample code allows to execute a set of Iris parts on multiple datasets
 #use your previous connectionDetails object with username and psw for database
 
 # use this for single dataset Iris ZIP file generation
- dataLinks=c('ccae_v5');resultsLinks=c('nih')
+ dataLinks=c('mdcr_v5');resultsLinks=c('nih')
 
 
 #use this for multiple datasets ZIP file process (modify the strings)
@@ -64,11 +64,11 @@ for (i in seq_along(dataLinks)){
  #execute early implementation of Achilles Share
  shareRes<-Iris:::achillesShare(connectionDetails,cdmDatabaseSchema=cdmDatabaseSchema,resultsDatabaseSchema=resultsDatabaseSchema)
  #optionaly include that in export
-  #write.csv(shareRes,paste0(cdmDatabaseSchema,'-iris_part-',1,'.csv'),na='',row.names=F)
+ write.csv(shareRes,paste0(cdmDatabaseSchema,'-iris_part-',1,'.csv'),na='',row.names=F)
 
  
   #there are some new rules implemented in Achilles (from May 6th) 
-  heelRes<-Achilles:::fetchAchillesHeelResults(connectionDetails,resultsLinks[i])
+  heelRes<-Achilles:::fetchAchillesHeelResults(connectionDetails,resultsDatabaseSchema)
   #optionaly include Heel output
   write.csv(heelRes,paste0(connectionDetails$schema,'-iris_part-',0,'.csv'),na='',row.names=F)
   
