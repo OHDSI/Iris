@@ -249,6 +249,22 @@ executePart <- function(part=1,connectionDetails,
 #
 
 
+#new function to extract small table (that fit into memory for manual inspection of results)
+#' @export
+#'
+fetchResultsTable <- function (connectionDetails, resultsDatabaseSchema, tableName){
+    connectionDetails$schema = resultsDatabaseSchema
+    conn <- connect(connectionDetails)
+
+
+    sql <- paste0("SELECT * FROM ",tableName)
+    sql <- renderSql(sql)$sql
+    res <- dbGetQuery(conn,sql)
+    res
+}
+
+
+
 
 
 #' Prototype inside Iris for AchillesShare

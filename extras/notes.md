@@ -4,6 +4,10 @@ This file contains various notes for Iris development
 In May 2016 - most original Iris measures were incorporated into Achilles
 Iris is being used for new features and data quality
 
+update: June 2016 some of the experimental features were moved to Achilles Derived measures.
+This mechanism can also be used to exchagne data density and other data quality
+parameters about a CDM dataset. Running latest version of Achilles Heel (where derived measures (=analyses) are generated is highly recommended)
+
 
 
 #running Iris just after you executed Achilles or just Achilles Heel
@@ -69,6 +73,12 @@ for (i in seq_along(dataLinks)){
  
   #there are some new rules implemented in Achilles (from May 6th) 
   heelRes<-Achilles:::fetchAchillesHeelResults(connectionDetails,resultsDatabaseSchema)
+  
+  heelDerivedMeasuresTable<-Iris::fetchResultsTable(connectionDetails,resultsDatabaseSchema,'achilles_results_derived')
+  #optionaly include Heel Derived measures output
+  #write.csv(heelDerivedMeasuresTable,paste0(connectionDetails$schema,'-iris_part-',99,'.csv'),na='',row.names=F)
+  
+    
   #optionaly include Heel output
   write.csv(heelRes,paste0(connectionDetails$schema,'-iris_part-',0,'.csv'),na='',row.names=F)
   
