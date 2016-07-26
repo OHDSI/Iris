@@ -1,7 +1,7 @@
 # Iris
 IRIS provides a high-level descriptive summary of a population within a OMOP CDM-compliant database
 
-Some Iris measures were incorporated in Achilles version 1.2+
+Some Iris measures were incorporated in Achilles version 1.3
 This version 1.1 uses CDM v5.
 Unlike v1.0, this version makes use of the  Measurement table to go after lab results.
 

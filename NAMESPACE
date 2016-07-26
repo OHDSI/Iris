@@ -2,6 +2,7 @@
 
 export(achillesShare)
 export(createDataSetConnectionDetails)
+export(doTree)
 export(email)
 export(execute)
 export(executePart)

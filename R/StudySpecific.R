@@ -263,7 +263,61 @@ fetchResultsTable <- function (connectionDetails, resultsDatabaseSchema, tableNa
     res
 }
 
+#experimental funtion with graphic output
+#' @export
+#'
 
+doTree <- function(connectionDetails,
+                    cdmDatabaseSchema,
+                    resultsDatabaseSchema = cdmDatabaseSchema,
+                    oracleTempSchema = resultsDatabaseSchema,
+                    cdmVersion = 5,
+                    outputFolder ='output'
+                    ) {
+
+    if (cdmVersion == 4) {
+        stop("CDM version 4 not supported")
+    }
+
+    if (!file.exists(outputFolder))
+        dir.create(outputFolder)
+
+    # cmOutputFolder <- file.path(outputFolder, "cmOutput")
+    # if (!file.exists(cmOutputFolder))
+    #     dir.create(cmOutputFolder)
+
+#connect
+    connectionDetails$schema=resultsDatabaseSchema
+    conn <- DatabaseConnector::connect(connectionDetails)
+
+#get query
+
+
+    sql <- "select stratum_1,
+100.0*count_value/(select count_value as total_pts from @results_database_schema.achilles_results r where analysis_id =1) as statistic_value,
+'ach_'+CAST(analysis_id as VARCHAR) + ':Percentage' as measure_id
+from @results_database_schema.achilles_results
+where analysis_id in (3)
+    "
+    sql <- SqlRender::renderSql(sql,results_database_schema = resultsDatabaseSchema)$sql
+    sql <- SqlRender::translateSql(sql, targetDialect = connectionDetails$dbms)$sql
+    data <- DatabaseConnector::querySql(conn, sql)
+
+
+#render tree
+    names(data) <- tolower(names(data))
+    cyear=as.numeric(format(Sys.Date(), "%Y"))
+    data$age=cyear-as.numeric(data$stratum_1)
+
+  ggplot2::ggplot(data=data, ggplot2::aes(x=age, y=statistic_value)) + ggplot2::geom_bar(stat="identity") + ggplot2::coord_flip()
+  ggplot2::ggsave(file.path(outputFolder, "DemogrPyramid.png"), width = 9, height = 9, dpi= 200)
+
+
+    # Clean up
+    RJDBC::dbDisconnect(conn)
+    writeLines("Done")
+    output
+}
 
 
 
@@ -395,6 +449,8 @@ achillesShare <- function (connectionDetails,
     writeLines("Done")
     output
 }
+
+
 
 # Package must provide a default gmail address to receive result files
 #' @keywords internal
